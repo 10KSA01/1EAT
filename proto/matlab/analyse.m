@@ -1,0 +1,47 @@
+% define command line arguments 
+function []=analyse(inputFile, outputFile)
+  % Import the data 
+  inputTable = readtable(inputFile);
+  
+  % Adding new columns and their calculations 
+  inputTable.Profit = zeros(height(inputTable), 1);
+  inputTable.Ec_Revenue = zeros(height(inputTable), 1);
+  inputTable.TotalCost = zeros(height(inputTable), 1);
+  inputTable.Profit_Revenue = zeros(height(inputTable), 1);
+  inputTable.TotalCost_Revenue = zeros(height(inputTable), 1);
+  
+  for i=1:height(inputTable)
+    inputTable.("TotalCost")(i) = inputTable.("EnviroemntalCosts")(i) + inputTable.("LogisticsCosts")(i) + inputTable.("WorkforceCosts")(i)  + inputTable.("OtherCosts")(i);
+    inputTable.("Profit")(i) =  inputTable.("Revenue")(i) + inputTable.("TotalCost")(i);
+    inputTable.("Ec_Revenue")(i) = inputTable.("EnviroemntalCosts")(i) / inputTable.("Revenue")(i);
+    inputTable.("Profit_Revenue")(i) = inputTable.("Profit")(i) / inputTable.("Revenue")(i);
+    inputTable.("TotalCost_Revenue")(i) = inputTable.("TotalCost")(i) / inputTable.("Revenue")(i);
+  end 
+  
+  % create variables 
+  FieldNames = string(inputTable.Properties.VariableNames(2:length(inputTable.Properties.VariableNames)))';
+  MinValues = zeros(length(FieldNames), 1);
+  Q1Values = zeros(length(FieldNames), 1);
+  Q2Values = zeros(length(FieldNames), 1);
+  Q3Values = zeros(length(FieldNames), 1);
+  MaxValues = zeros(length(FieldNames), 1);
+  Averages = zeros(length(FieldNames), 1);
+  Std = zeros(length(FieldNames), 1);
+  
+  % extracting calculations 
+  for i=1:length(FieldNames)
+      MinValues(i) = min(inputTable.(string(FieldNames(i))));
+      MaxValues(i) = max(inputTable.(string(FieldNames(i))));
+      qr = prctile(inputTable.(string(FieldNames(i))), [25, 50, 75]);
+      Q1Values(i) = qr(1);
+      Q2Values(i) = qr(2);
+      Q3Values(i) = qr(3);
+      Averages(i) = mean(inputTable.(string(FieldNames(i))));
+      Std(i) = std(inputTable.(string(FieldNames(i))));    
+  end
+  
+  finalTable = array2table([FieldNames, MinValues, MaxValues, Q1Values, Q2Values, Q3Values, Averages, Std],'VariableNames',{'FieldNames','MinValues','MaxValues','Q1Values', 'Q2Values', 'Q3Values', 'Averages', 'Std'});
+  
+  % writing data 
+  writetable(finalTable, outputFile+".csv",'Delimiter',',');
+end
