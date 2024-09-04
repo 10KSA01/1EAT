@@ -18,3 +18,5 @@ We learned the importance of collaboration with diverse team members. Our UI/UX 
 
 # What's Next for 1EAT
 We aim to test our tool with real companies and their data to see how it can improve their annual profits and reduce their carbon footprint. We also plan to enhance the code to ensure it is maintainable by other developers. Additionally, we should consider expanding beyond Python and exploring other managed languages with frameworks such as Electron in Node.js, enabling the web app to function in a desktop environment and improving language accessibility.
+
+https://devpost.com/software/1eat
